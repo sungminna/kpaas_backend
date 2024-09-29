@@ -1,4 +1,4 @@
-'''장내채권 종목정보(bond_code.mst) 정제 파이썬 파일'''
+"""장내채권 종목정보(bond_code.mst) 정제 파이썬 파일"""
 
 import pandas as pd
 import urllib.request
@@ -18,7 +18,7 @@ def download_and_extract_file(url, output_dir, zip_filename, extracted_filename)
 
     # Extract the file
     print(f"Extracting {zip_filename}...")
-    with zipfile.ZipFile(zip_filepath, 'r') as zip_ref:
+    with zipfile.ZipFile(zip_filepath, "r") as zip_ref:
         zip_ref.extractall(output_dir)
 
     return os.path.join(output_dir, extracted_filename)
@@ -41,11 +41,29 @@ def get_bond_master_dataframe(file_path):
         bond_int_cls_code = row[-26:-24].strip()
         sname = row[16:-26].rstrip()  # 종목명을 뒤에서부터 추출하여 남은 부분
 
-        data.append([bond_type, bond_cls_code, stnd_iscd, sname, bond_int_cls_code,
-                     lstn_date, pblc_date, rdmp_date])
+        data.append(
+            [
+                bond_type,
+                bond_cls_code,
+                stnd_iscd,
+                sname,
+                bond_int_cls_code,
+                lstn_date,
+                pblc_date,
+                rdmp_date,
+            ]
+        )
 
-    columns = ['유형', '채권분류코드', '표준코드', '종목명', '채권이자분류코드',
-               '상장일', '발행일', '상환일']
+    columns = [
+        "유형",
+        "채권분류코드",
+        "표준코드",
+        "종목명",
+        "채권이자분류코드",
+        "상장일",
+        "발행일",
+        "상환일",
+    ]
 
     df = pd.DataFrame(data, columns=columns)
     return df
@@ -63,5 +81,5 @@ df_bond = get_bond_master_dataframe(file_path)
 
 # 엑셀 파일 저장
 print("Saving to Excel...")
-df_bond.to_excel('bond_code.xlsx', index=False)
+df_bond.to_excel("bond_code.xlsx", index=False)
 print("Excel file created successfully.")
