@@ -8,6 +8,7 @@ from .models import (
     MarketBondInquirePrice,
     MarketBondInquireCCNL,
     MarketBondInquireDailyPrice,
+    NaverNews
 )
 from rest_framework import viewsets
 
@@ -20,6 +21,7 @@ from .serializer import (
     MarketBondInquirePriceSerializer,
     MarketBondInquireCCNLSerializer,
     MarketBondInquireDailyPriceSerializer,
+    NaverNewsSerializer
 )
 
 
@@ -62,3 +64,8 @@ class MarketBondInquireCCNLViewSet(viewsets.ReadOnlyModelViewSet):
 class MarketBondInquireDailyPriceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MarketBondInquireDailyPrice.objects.all()
     serializer_class = MarketBondInquireDailyPriceSerializer
+
+
+class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = NaverNews.objects.all()
+    serializer_class = NaverNewsSerializer
