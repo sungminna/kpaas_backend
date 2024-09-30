@@ -7,7 +7,9 @@ from .models import (
     MarketBondInquireDailyItemChartPrice,
     MarketBondInquirePrice,
     MarketBondInquireCCNL,
-    MarketBondInquireDailyPrice, NaverNews,
+    MarketBondInquireDailyPrice,
+    SearchKeyword,
+    NaverNews,
 )
 
 
@@ -56,6 +58,12 @@ class MarketBondInquireCCNLSerializer(serializers.ModelSerializer):
 class MarketBondInquireDailyPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketBondInquireDailyPrice
+        fields = "__all__"
+
+
+class SearchKeywordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SearchKeyword
         fields = "__all__"
 
 

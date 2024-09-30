@@ -1,10 +1,11 @@
-import kis_auth as kis
+from koreaib.kib_api.kis_auth import KisAuth
 import json
 
 class GetRestData:
-    def __init__(self):
-        self.pdno = "KR6150351E98"  #KR6150351E98
-
+    def __init__(self, pdno="KR6150351E98"):
+        self.kis = KisAuth()
+        self.kis.auth()
+        self.pdno = pdno  #KR6150351E98
 
 
     # 장내채권 발행정보
@@ -24,9 +25,10 @@ class GetRestData:
             tr_cont,
             params,
         )
-        data = json.dumps(res.getBody().output)
-        print(data)
-
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 
     # 장내채권현재가(호가)
@@ -46,7 +48,10 @@ class GetRestData:
             tr_cont,
             params,
         )
-        print(res.getBody())
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 
     # 장내채권 평균단가조회
@@ -71,7 +76,10 @@ class GetRestData:
             tr_cont,
             params,
         )
-        print(res.getBody())
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 
     # 장내채권 기간별시세(일)
@@ -91,7 +99,10 @@ class GetRestData:
             tr_cont,
             params,
         )
-        print(res.getBody())
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 
     # 장내채권현재가(시세)
@@ -111,7 +122,10 @@ class GetRestData:
             tr_cont,
             params,
         )
-        print(res.getBody())
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 
     # 장내채권현재가(체결)
@@ -131,7 +145,10 @@ class GetRestData:
             tr_cont,
             params,
         )
-        print(res.getBody())
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 
     # 장내채권현재가(일별)
@@ -151,8 +168,33 @@ class GetRestData:
             tr_cont,
             params,
         )
-        print(res.getBody())
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
+
+    # 장내채권 기본조회
+    def get_search_bond_info(self):
+        url = "/uapi/domestic-bond/v1/quotations/search-bond-info"
+        ptr_id = "CTPF1114R"
+        tr_cont = ""
+
+        params = {
+            "PDNO": "KR2033022D33",  # 채권종목코드
+            "PRDT_TYPE_CD": "302",  # 상품유형코드
+        }
+
+        res = kis._url_fetch(
+            url,
+            ptr_id,
+            tr_cont,
+            params,
+        )
+        dic = res.getBody().output
+        dic['code'] = self.pdno
+        data = json.dumps(dic)
+        return data
 
 if __name__ == "__main__":
     kis.auth()

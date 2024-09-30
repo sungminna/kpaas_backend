@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.response import Response
+
 from .models import (
     MarketBondIssueInfo,
     MarketBondSearchInfo,
@@ -8,9 +10,9 @@ from .models import (
     MarketBondInquirePrice,
     MarketBondInquireCCNL,
     MarketBondInquireDailyPrice,
+    SearchKeyword,
     NaverNews
 )
-from rest_framework import viewsets
 
 from .serializer import (
     MarketBondIssueInfoSerializer,
@@ -21,14 +23,35 @@ from .serializer import (
     MarketBondInquirePriceSerializer,
     MarketBondInquireCCNLSerializer,
     MarketBondInquireDailyPriceSerializer,
+    SearchKeywordSerializer,
     NaverNewsSerializer
 )
 
+from koreaib.kib_api.collect_kis_data import CollectMarketBond
+
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 
 # Create your views here.
 class MarketBondIssueInfoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MarketBondIssueInfo.objects.all()
     serializer_class = MarketBondIssueInfoSerializer
+
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        if not code:
+            return Response({'error': 'code is missing'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            issue_info = MarketBondIssueInfo.objects.filter(code=code).first()
+            if issue_info:
+                return Response({'issue_info': issue_info}, status=status.HTTP_200_OK)
+            else:
+                collector = CollectMarketBond(code)
+                collector.store_market_bond_issue_info()
+                return Response({'issue_info': issue_info}, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MarketBondSearchInfoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -64,6 +87,11 @@ class MarketBondInquireCCNLViewSet(viewsets.ReadOnlyModelViewSet):
 class MarketBondInquireDailyPriceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MarketBondInquireDailyPrice.objects.all()
     serializer_class = MarketBondInquireDailyPriceSerializer
+
+
+class SearchKeywordViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SearchKeyword.objects.all()
+    serializer_class = SearchKeywordSerializer
 
 
 class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
