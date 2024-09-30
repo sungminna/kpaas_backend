@@ -63,7 +63,7 @@ class MarketBondIssueInfoViewSet(viewsets.ReadOnlyModelViewSet):
             if not issue_info:
                 collector = CollectMarketBond(code, bond_code)
                 collector.store_market_bond_issue_info()
-            issue_info = MarketBondIssueInfo.objects.filter(code=code).first()
+            issue_info = MarketBondIssueInfo.objects.filter(code=bond_code).first()
             if issue_info:
                 serializer = self.get_serializer(issue_info)
                 return Response(serializer.data, status=status.HTTP_200_OK)
