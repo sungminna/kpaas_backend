@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import (
+    MarketBondCode,
     MarketBondIssueInfo,
     MarketBondSearchInfo,
     MarketBondInquireAskingPrice,
@@ -13,7 +14,14 @@ from .models import (
 )
 
 
+class MarketBondCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MarketBondCode
+        fields = '__all__'
+
+
 class MarketBondIssueInfoSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
     class Meta:
         model = MarketBondIssueInfo
         fields = "__all__"

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 
 from .models import (
+    MarketBondCode,
     MarketBondIssueInfo,
     MarketBondSearchInfo,
     MarketBondInquireAskingPrice,
@@ -15,6 +16,7 @@ from .models import (
 )
 
 from .serializer import (
+    MarketBondCodeSerializer,
     MarketBondIssueInfoSerializer,
     MarketBondSearchInfoSerializer,
     MarketBondInquireAskingPriceSerializer,
@@ -32,6 +34,12 @@ from koreaib.kib_api.collect_kis_data import CollectMarketBond
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
+class MarketBondCodeViewSet(viewsets.ModelViewSet):
+    queryset = MarketBondCode.objects.all()
+    serializer_class = MarketBondCodeSerializer
+
+
+
 # Create your views here.
 class MarketBondIssueInfoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MarketBondIssueInfo.objects.all()
@@ -43,13 +51,24 @@ class MarketBondIssueInfoViewSet(viewsets.ReadOnlyModelViewSet):
         if not code:
             return Response({'error': 'code is missing'}, status=status.HTTP_400_BAD_REQUEST)
         try:
+            bond_code = MarketBondCode.objects.filter(code=code).first()
+            if not bond_code:
+                serializer = MarketBondCodeSerializer(data={'code': code})
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            bond_code = MarketBondCode.objects.filter(code=code).first()
+            issue_info = MarketBondIssueInfo.objects.filter(code=bond_code).first()
+            if not issue_info:
+                collector = CollectMarketBond(code, bond_code)
+                collector.store_market_bond_issue_info()
             issue_info = MarketBondIssueInfo.objects.filter(code=code).first()
             if issue_info:
-                return Response({'issue_info': issue_info}, status=status.HTTP_200_OK)
+                serializer = self.get_serializer(issue_info)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                collector = CollectMarketBond(code)
-                collector.store_market_bond_issue_info()
-                return Response({'issue_info': issue_info}, status=status.HTTP_200_OK)
+                return Response({'error': 'Failed to retrieve or create issue info'}, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 

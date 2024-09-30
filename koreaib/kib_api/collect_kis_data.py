@@ -28,14 +28,19 @@ from koreaib.serializer import (
 from koreaib.kib_api.get_rest_data import GetRestData
 
 class CollectMarketBond:
-    def __init__(self, pdno="KR6150351E98"):
+    def __init__(self, pdno="KR6150351E98", bond_code=''):
         self.pdno = pdno
-        self.data_getter = GetRestData(pdno=self.pdno)
+        self.bond_code = bond_code
+        self.data_getter = GetRestData(pdno=self.pdno, bond_code=self.bond_code)
 
     def store_market_bond_issue_info(self):
         data = self.data_getter.get_issue_info()
+        print(data)
         serializer = MarketBondIssueInfoSerializer(data=data)
+        print(serializer)
+
         if serializer.is_valid():
+            print('valid')
             serializer.save()
 
     def store_market_bond_search_info(self):

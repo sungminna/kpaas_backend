@@ -2,10 +2,11 @@ from koreaib.kib_api.kis_auth import KisAuth
 import json
 
 class GetRestData:
-    def __init__(self, pdno="KR6150351E98"):
+    def __init__(self, pdno="KR6150351E98", bond_code=''):
         self.kis = KisAuth()
         self.kis.auth()
         self.pdno = pdno  #KR6150351E98
+        self.bond_code = bond_code
 
 
     # 장내채권 발행정보
@@ -18,17 +19,16 @@ class GetRestData:
             "PDNO": self.pdno,  # 시장 분류 코드
             "PRDT_TYPE_CD": "302",  # 화면 분류 코드
         }
-
-        res = kis._url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
+        dic['code'] = self.bond_code.id
         data = json.dumps(dic)
-        return data
+        return dic
 
 
     # 장내채권현재가(호가)
@@ -42,7 +42,7 @@ class GetRestData:
             "FID_INPUT_ISCD": self.pdno,  # 채권종목코드
         }
 
-        res = kis._url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -70,7 +70,7 @@ class GetRestData:
             "CTX_AREA_FK100": "",  # 연속조회검색조건100
         }
 
-        res = kis._url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -93,7 +93,7 @@ class GetRestData:
             "FID_INPUT_ISCD": self.pdno,  # 채권종목코드
         }
 
-        res = kis._url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -116,7 +116,7 @@ class GetRestData:
             "FID_INPUT_ISCD": self.pdno,  # 채권종목코드
         }
 
-        res = kis._url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -139,7 +139,7 @@ class GetRestData:
             "FID_INPUT_ISCD": self.pdno,  # 채권종목코드
         }
 
-        res = kis._url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -162,7 +162,7 @@ class GetRestData:
             "FID_INPUT_ISCD": self.pdno,  # 채권종목코드
         }
 
-        res = kis._url_fetch(
+        res = self.kis_url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -185,7 +185,7 @@ class GetRestData:
             "PRDT_TYPE_CD": "302",  # 상품유형코드
         }
 
-        res = kis._url_fetch(
+        res = self.kis_url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -197,6 +197,5 @@ class GetRestData:
         return data
 
 if __name__ == "__main__":
-    kis.auth()
     re = GetRestData()
     re.get_issue_info()

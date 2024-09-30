@@ -2,12 +2,12 @@ from django.db import models
 
 # Create your models here.
 
-class market_bond_codes(models.Model):
+class MarketBondCode(models.Model):
     code = models.CharField(max_length=100)
 
 # 장내채권 발행정보
 class MarketBondIssueInfo(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     pdno = models.CharField(max_length=12, verbose_name="상품번호")
     prdt_type_cd = models.CharField(max_length=3, verbose_name="상품유형코드")
     prdt_name = models.CharField(max_length=60, verbose_name="상품명")
@@ -147,7 +147,7 @@ class MarketBondIssueInfo(models.Model):
 
 # 장내채권 기본조회
 class MarketBondSearchInfo(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     pdno = models.CharField(max_length=12, verbose_name="상품번호")
     prdt_type_cd = models.CharField(max_length=3, verbose_name="상품유형코드")
     ksd_bond_item_name = models.CharField(
@@ -333,7 +333,7 @@ class MarketBondSearchInfo(models.Model):
 
 # 장내채권현재가(호가)
 class MarketBondInquireAskingPrice(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     aspr_acpt_hour = models.CharField(max_length=6, verbose_name="호가 접수 시간")
     bond_askp1 = models.CharField(max_length=112, verbose_name="채권 매도호가1")
     bond_askp2 = models.CharField(max_length=112, verbose_name="채권 매도호가2")
@@ -378,7 +378,7 @@ class MarketBondAvgUnit(models.Model):
 
 # 장내채권 기간별시세(일)
 class MarketBondInquireDailyItemChartPrice(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     stck_bsop_date = models.CharField(max_length=8, verbose_name="주식영업일자")
     bond_oprc = models.CharField(max_length=112, verbose_name="채권시가2")
     bond_hgpr = models.CharField(max_length=112, verbose_name="채권고가")
@@ -389,7 +389,7 @@ class MarketBondInquireDailyItemChartPrice(models.Model):
 
 # 장내채권현재가(시세)
 class MarketBondInquirePrice(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     stnd_iscd = models.CharField(max_length=12, verbose_name="표준종목코드")
     hts_kor_isnm = models.CharField(max_length=40, verbose_name="HTS한글종목명")
     bond_prpr = models.CharField(max_length=112, verbose_name="채권현재가")
@@ -411,7 +411,7 @@ class MarketBondInquirePrice(models.Model):
 
 # 장내채권현재가(체결)
 class MarketBondInquireCCNL(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     stck_cntg_hour = models.CharField(max_length=6, verbose_name="주식 체결 시간")
     bond_prpr = models.CharField(max_length=112, verbose_name="채권 현재가")
     bond_prdy_vrss = models.CharField(max_length=112, verbose_name="채권 전일 대비")
@@ -427,7 +427,7 @@ class MarketBondInquireCCNL(models.Model):
 
 # 장내채권현재가(일별)
 class MarketBondInquireDailyPrice(models.Model):
-    code = models.ForeignKey(market_bond_codes, on_delete=models.CASCADE)
+    code = models.ForeignKey(MarketBondCode, on_delete=models.CASCADE)
     stck_bsop_date = models.CharField(max_length=8, verbose_name="주식영업일자")
     bond_prpr = models.CharField(max_length=112, verbose_name="채권현재가")
     bond_prdy_vrss = models.CharField(max_length=112, verbose_name="채권전일대비")

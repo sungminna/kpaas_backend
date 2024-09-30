@@ -230,6 +230,50 @@ class KisAuth:
         if self._DEBUG:
             print(f"[{self._last_auth_time}] => get AUTH Key completed!")
 
+    ########### API call wrapping : API 호출 공통
+
+    def _url_fetch(
+            this, api_url, ptr_id, tr_cont, params, appendHeaders=None, postFlag=False, hashFlag=True
+    ):
+        url = f"{this.getTREnv().my_url}{api_url}"
+
+        headers = this._getBaseHeader()  # 기본 header 값 정리
+
+        # 추가 Header 설정
+        tr_id = ptr_id
+        if ptr_id[0] in ("T", "J", "C"):  # 실전투자용 TR id 체크
+            if this.isPaperTrading():  # 모의투자용 TR id 식별
+                tr_id = "V" + ptr_id[1:]
+
+        headers["tr_id"] = tr_id  # 트랜젝션 TR id
+        headers["custtype"] = "P"  # 일반(개인고객,법인고객) "P", 제휴사 "B"
+        headers["tr_cont"] = tr_cont  # 트랜젝션 TR id
+
+        if appendHeaders is not None:
+            if len(appendHeaders) > 0:
+                for x in appendHeaders.keys():
+                    headers[x] = appendHeaders.get(x)
+
+        if this._DEBUG:
+            print("< Sending Info >")
+            print(f"URL: {url}, TR: {tr_id}")
+            print(f"<header>\n{headers}")
+            print(f"<body>\n{params}")
+
+        if postFlag:
+            # if (hashFlag): set_order_hash_key(headers, params)
+            res = requests.post(url, headers=headers, data=json.dumps(params))
+        else:
+            res = requests.get(url, headers=headers, params=params)
+
+        if res.status_code == 200:
+            ar = APIResp(res)
+            if this._DEBUG:
+                ar.printAll()
+            return ar
+        else:
+            print("Error Code : " + str(res.status_code) + " | " + res.text)
+            return None
 
     # end of initialize, 토큰 재발급, 토큰 발급시 유효시간 1일
     # 프로그램 실행시 _last_auth_time에 저장하여 유효시간 체크, 유효시간 만료시 토큰 발급 처리
@@ -341,50 +385,3 @@ class APIResp:
 
     # end of class APIResp
 
-
-########### API call wrapping : API 호출 공통
-
-
-def _url_fetch(
-    api_url, ptr_id, tr_cont, params, appendHeaders=None, postFlag=False, hashFlag=True
-):
-    ka = KisAuth()
-    url = f"{ka.getTREnv().my_url}{api_url}"
-
-    headers = ka._getBaseHeader()  # 기본 header 값 정리
-
-    # 추가 Header 설정
-    tr_id = ptr_id
-    if ptr_id[0] in ("T", "J", "C"):  # 실전투자용 TR id 체크
-        if ka.isPaperTrading():  # 모의투자용 TR id 식별
-            tr_id = "V" + ptr_id[1:]
-
-    headers["tr_id"] = tr_id  # 트랜젝션 TR id
-    headers["custtype"] = "P"  # 일반(개인고객,법인고객) "P", 제휴사 "B"
-    headers["tr_cont"] = tr_cont  # 트랜젝션 TR id
-
-    if appendHeaders is not None:
-        if len(appendHeaders) > 0:
-            for x in appendHeaders.keys():
-                headers[x] = appendHeaders.get(x)
-
-    if ka._DEBUG:
-        print("< Sending Info >")
-        print(f"URL: {url}, TR: {tr_id}")
-        print(f"<header>\n{headers}")
-        print(f"<body>\n{params}")
-
-    if postFlag:
-        # if (hashFlag): set_order_hash_key(headers, params)
-        res = requests.post(url, headers=headers, data=json.dumps(params))
-    else:
-        res = requests.get(url, headers=headers, params=params)
-
-    if res.status_code == 200:
-        ar = APIResp(res)
-        if ka._DEBUG:
-            ar.printAll()
-        return ar
-    else:
-        print("Error Code : " + str(res.status_code) + " | " + res.text)
-        return None
