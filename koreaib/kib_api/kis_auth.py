@@ -244,7 +244,6 @@ class KisAuth:
         url = f"{this.getTREnv().my_url}{api_url}"
 
         headers = this._getBaseHeader()  # 기본 header 값 정리
-
         # 추가 Header 설정
         tr_id = ptr_id
         if ptr_id[0] in ("T", "J", "C"):  # 실전투자용 TR id 체크

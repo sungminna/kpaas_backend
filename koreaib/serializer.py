@@ -116,6 +116,8 @@ class MarketBondIssueInfoSerializer(serializers.ModelSerializer):
 
 
 class MarketBondSearchInfoSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondSearchInfo
         fields = "__all__"
@@ -200,10 +202,13 @@ class MarketBondSearchInfoSerializer(serializers.ModelSerializer):
             "krx_issu_istt_cd": {"allow_blank": True},
             "ksd_indf_frqc_uder_calc_cd": {"allow_blank": True},
             "ksd_indf_frqc_uder_calc_dcnt": {"allow_blank": True},
+            "tlg_rcvg_dtl_dtime": {"allow_blank": True},
         }
 
 
 class MarketBondInquireAskingPriceSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondInquireAskingPrice
         fields = "__all__"
@@ -246,12 +251,16 @@ class MarketBondInquireAskingPriceSerializer(serializers.ModelSerializer):
 
 
 class MarketBondAvgUnitSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondAvgUnit
         fields = "__all__"
 
 
 class MarketBondInquireDailyItemChartPriceSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondInquireDailyItemChartPrice
         fields = "__all__"
@@ -266,6 +275,8 @@ class MarketBondInquireDailyItemChartPriceSerializer(serializers.ModelSerializer
 
 
 class MarketBondInquirePriceSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondInquirePrice
         fields = "__all__"
@@ -291,6 +302,8 @@ class MarketBondInquirePriceSerializer(serializers.ModelSerializer):
 
 
 class MarketBondInquireCCNLSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondInquireCCNL
         fields = "__all__"
@@ -306,6 +319,8 @@ class MarketBondInquireCCNLSerializer(serializers.ModelSerializer):
 
 
 class MarketBondInquireDailyPriceSerializer(serializers.ModelSerializer):
+    code = serializers.PrimaryKeyRelatedField(queryset=MarketBondCode.objects.all())
+
     class Meta:
         model = MarketBondInquireDailyPrice
         fields = "__all__"

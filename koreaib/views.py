@@ -58,7 +58,6 @@ class MarketBondBaseViewSet(viewsets.ReadOnlyModelViewSet):
                     {"error": "Failed to retrieve or create market bond code"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
         bond_code = MarketBondCode.objects.filter(code=code).first()
         return bond_code, None
 
@@ -114,7 +113,7 @@ class MarketBondSearchInfoViewSet(MarketBondBaseViewSet):
             return error_response
         try:
             issue_info = self.collect_and_get_info(
-                code, bond_code, MarketBondSearchInfo, "store_market_bond_search_info"
+                code, bond_code, MarketBondSearchInfo, "store_market_search_bond_info"
             )
             return self.handle_response(issue_info, self.serializer_class)
         except:

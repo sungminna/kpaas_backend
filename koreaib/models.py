@@ -269,7 +269,7 @@ class MarketBondSearchInfo(models.Model):
     int_mned_dvsn_cd = models.CharField(
         max_length=1,
         verbose_name="이자월말구분코드",
-        choices=[("1", "일자기준"), ("2", "말일기준")],
+        choices=[("0", "확인불가"), ("1", "일자기준"), ("2", "말일기준")],
     )
     pnia_int_calc_unpr = models.CharField(
         max_length=234, verbose_name="원리금이자계산단가"
@@ -282,7 +282,7 @@ class MarketBondSearchInfo(models.Model):
         max_length=1, verbose_name="증권예탁결제원만기일할계산기준"
     )
     expd_dydv_calc_dcnt = models.CharField(
-        max_length=7, verbose_name="만기일할계산일수"
+        max_length=9, verbose_name="만기일할계산일수"
     )
     ksd_cbbw_dvsn_cd = models.CharField(
         max_length=1, verbose_name="증권예탁결제원신종사채구분코드"
@@ -329,7 +329,10 @@ class MarketBondSearchInfo(models.Model):
         max_length=1, verbose_name="증권예탁결제원이자지급주기미만"
     )
     ksd_indf_frqc_uder_calc_dcnt = models.CharField(
-        max_length=4, verbose_name="증권예탁결제원이자지급주기미만"
+        max_length=5, verbose_name="증권예탁결제원이자지급주기미만"
+    )
+    tlg_rcvg_dtl_dtime = models.CharField(
+        max_length=10, verbose_name="전문수신상세일시"
     )
 
 

@@ -151,7 +151,7 @@ class GetRestData:
             "FID_INPUT_ISCD": self.pdno,  # 채권종목코드
         }
 
-        res = self.kis_url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
@@ -168,11 +168,10 @@ class GetRestData:
         tr_cont = ""
 
         params = {
-            "PDNO": "KR2033022D33",  # 채권종목코드
+            "PDNO": self.pdno,  # 채권종목코드
             "PRDT_TYPE_CD": "302",  # 상품유형코드
         }
-
-        res = self.kis_url_fetch(
+        res = self.kis._url_fetch(
             url,
             ptr_id,
             tr_cont,
