@@ -35,12 +35,8 @@ class CollectMarketBond:
 
     def store_market_bond_issue_info(self):
         data = self.data_getter.get_issue_info()
-        print(data)
         serializer = MarketBondIssueInfoSerializer(data=data)
-        print(serializer)
-
         if serializer.is_valid():
-            print('valid')
             serializer.save()
 
     def store_market_bond_search_info(self):

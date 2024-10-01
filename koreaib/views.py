@@ -41,71 +41,173 @@ class MarketBondCodeViewSet(viewsets.ModelViewSet):
 
 
 # Create your views here.
-class MarketBondIssueInfoViewSet(viewsets.ReadOnlyModelViewSet):
+class MarketBondBaseViewSet(viewsets.ReadOnlyModelViewSet):
+    def get_bond_code(self, code):
+        if not code:
+            return None, Response({'error': 'code is missing'}, status=status.HTTP_400_BAD_REQUEST)
+
+        bond_code = MarketBondCode.objects.filter(code=code).first()
+        if not bond_code:
+            serializer = MarketBondCodeSerializer(data={'code': code})
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                return None, Response({'error': 'Failed to retrieve or create market bond code'},
+                                      status=status.HTTP_400_BAD_REQUEST)
+
+        bond_code = MarketBondCode.objects.filter(code=code).first()
+        return bond_code, None
+
+    def collect_and_get_info(self, code, bond_code, model, collect_method):
+        info = model.objects.filter(code=bond_code).first()
+        if not info:
+            collector = CollectMarketBond(code, bond_code)
+            getattr(collector, collect_method)()
+            info = model.objects.filter(code=bond_code).first()
+        return info
+
+    def handle_response(self, instance, serializer_class):
+        if instance:
+            serializer = serializer_class(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Failed to retrieve or create info'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class MarketBondIssueInfoViewSet(MarketBondBaseViewSet):
     queryset = MarketBondIssueInfo.objects.all()
     serializer_class = MarketBondIssueInfoSerializer
 
     @action(detail=False, methods=['GET'])
     def market_bond_issue_info(self, request, *args, **kwargs):
         code = request.query_params.get('code')
-        if not code:
-            return Response({'error': 'code is missing'}, status=status.HTTP_400_BAD_REQUEST)
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
         try:
-            bond_code = MarketBondCode.objects.filter(code=code).first()
-            if not bond_code:
-                serializer = MarketBondCodeSerializer(data={'code': code})
-                if serializer.is_valid():
-                    serializer.save()
-                else:
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            bond_code = MarketBondCode.objects.filter(code=code).first()
-            issue_info = MarketBondIssueInfo.objects.filter(code=bond_code).first()
-            if not issue_info:
-                collector = CollectMarketBond(code, bond_code)
-                collector.store_market_bond_issue_info()
-            issue_info = MarketBondIssueInfo.objects.filter(code=bond_code).first()
-            if issue_info:
-                serializer = self.get_serializer(issue_info)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'Failed to retrieve or create issue info'}, status=status.HTTP_404_NOT_FOUND)
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondIssueInfo, 'store_market_bond_issue_info')
+            return self.handle_response(issue_info, self.serializer_class)
         except:
             return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MarketBondSearchInfoViewSet(viewsets.ReadOnlyModelViewSet):
+class MarketBondSearchInfoViewSet(MarketBondBaseViewSet):
     queryset = MarketBondSearchInfo.objects.all()
     serializer_class = MarketBondSearchInfoSerializer
 
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondSearchInfo, 'store_market_bond_search_info')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-class MarketBondInquireAskingPriceViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MarketBondInquireAskingPriceViewSet(MarketBondBaseViewSet):
     queryset = MarketBondInquireAskingPrice.objects.all()
     serializer_class = MarketBondInquireAskingPriceSerializer
 
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondInquireAskingPrice, 'store_market_bond_inquire_asking_price')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-class MarketBondAvgUnitViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MarketBondAvgUnitViewSet(MarketBondBaseViewSet):
     queryset = MarketBondAvgUnit.objects.all()
     serializer_class = MarketBondAvgUnitSerializer
 
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondAvgUnit, 'store_market_bond_avg_unit')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-class MarketBondInquireDailyItemChartPriceViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MarketBondInquireDailyItemChartPriceViewSet(MarketBondBaseViewSet):
     queryset = MarketBondInquireDailyItemChartPrice.objects.all()
     serializer_class = MarketBondInquireDailyItemChartPriceSerializer
 
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondInquireDailyItemChartPrice, 'store_market_bond_inquire_daily_itemchartprice')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-class MarketBondInquirePriceViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MarketBondInquirePriceViewSet(MarketBondBaseViewSet):
     queryset = MarketBondInquirePrice.objects.all()
     serializer_class = MarketBondInquirePriceSerializer
 
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondInquirePrice, 'store_market_bond_inquire_price')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-class MarketBondInquireCCNLViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MarketBondInquireCCNLViewSet(MarketBondBaseViewSet):
     queryset = MarketBondInquireCCNL.objects.all()
     serializer_class = MarketBondInquireCCNLSerializer
 
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondInquireCCNL, 'store_market_bond_inquire_ccnl')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-class MarketBondInquireDailyPriceViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MarketBondInquireDailyPriceViewSet(MarketBondBaseViewSet):
     queryset = MarketBondInquireDailyPrice.objects.all()
     serializer_class = MarketBondInquireDailyPriceSerializer
+
+    @action(detail=False, methods=['GET'])
+    def market_bond_issue_info(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        bond_code, error_response = self.get_bond_code(code)
+        if error_response:
+            return error_response
+        try:
+            issue_info = self.collect_and_get_info(code, bond_code, MarketBondInquireDailyPrice, 'store_market_bond_inquire_daily_price')
+            return self.handle_response(issue_info, self.serializer_class)
+        except:
+            return Response({'error': 'code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchKeywordViewSet(viewsets.ReadOnlyModelViewSet):

@@ -27,7 +27,7 @@ class GetRestData:
         )
         dic = res.getBody().output
         dic['code'] = self.bond_code.id
-        data = json.dumps(dic)
+        # data = json.dumps(dic)
         return dic
 
 
@@ -49,9 +49,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 
     # 장내채권 평균단가조회
@@ -77,9 +76,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 
     # 장내채권 기간별시세(일)
@@ -100,9 +98,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 
     # 장내채권현재가(시세)
@@ -123,9 +120,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 
     # 장내채권현재가(체결)
@@ -146,9 +142,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 
     # 장내채권현재가(일별)
@@ -169,9 +164,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 
     # 장내채권 기본조회
@@ -192,9 +186,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic['code'] = self.pdno
-        data = json.dumps(dic)
-        return data
+        dic['code'] = self.bond_code.id
+        return dic
 
 if __name__ == "__main__":
     re = GetRestData()
