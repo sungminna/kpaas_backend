@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import UniqueConstraint
+
 
 # Create your models here.
 
@@ -391,6 +393,10 @@ class MarketBondInquireDailyItemChartPrice(models.Model):
     bond_prpr = models.CharField(max_length=112, verbose_name="채권현재가")
     acml_vol = models.CharField(max_length=18, verbose_name="누적거래량")
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['stck_bsop_date'], name='unique_daily_item_chart_price')
+        ]
 
 # 장내채권현재가(시세)
 class MarketBondInquirePrice(models.Model):
@@ -443,6 +449,10 @@ class MarketBondInquireDailyPrice(models.Model):
     bond_hgpr = models.CharField(max_length=112, verbose_name="채권고가")
     bond_lwpr = models.CharField(max_length=112, verbose_name="채권저가")
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['stck_bsop_date'], name='unique_daily_price')
+        ]
 
 # 네이버 뉴스 검색 키워드
 class SearchKeyword(models.Model):

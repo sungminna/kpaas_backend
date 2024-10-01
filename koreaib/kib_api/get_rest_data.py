@@ -95,7 +95,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic["code"] = self.bond_code.id
+        for item in dic:
+            item["code"] = self.bond_code.id
         return dic
 
     # 장내채권현재가(시세)
@@ -158,7 +159,8 @@ class GetRestData:
             params,
         )
         dic = res.getBody().output
-        dic["code"] = self.bond_code.id
+        for item in dic:
+            item["code"] = self.bond_code.id
         return dic
 
     # 장내채권 기본조회

@@ -62,7 +62,7 @@ class CollectMarketBond:
 
     def store_market_bond_inquire_daily_itemchartprice(self):
         data = self.data_getter.get_inquire_daily_itemchartprice()
-        serializer = MarketBondInquireDailyItemChartPriceSerializer(data=data)
+        serializer = MarketBondInquireDailyItemChartPriceSerializer(data=data, many=True)
         if serializer.is_valid():
             serializer.save()
 
@@ -80,7 +80,7 @@ class CollectMarketBond:
 
     def store_market_bond_inquire_daily_price(self):
         data = self.data_getter.get_inquire_daily_price()
-        serializer = MarketBondInquireDailyPriceSerializer(data=data)
+        serializer = MarketBondInquireDailyPriceSerializer(data=data, many=True)
         if serializer.is_valid():
             serializer.save()
 

@@ -34,6 +34,9 @@ from koreaib.kib_api.collect_kis_data import CollectMarketBond
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
+from django.core.serializers import serialize
+import json
+
 
 class MarketBondCodeViewSet(viewsets.ModelViewSet):
     queryset = MarketBondCode.objects.all()
@@ -67,6 +70,14 @@ class MarketBondBaseViewSet(viewsets.ReadOnlyModelViewSet):
             collector = CollectMarketBond(code, bond_code)
             getattr(collector, collect_method)()
             info = model.objects.filter(code=bond_code).first()
+        return info
+
+    def collect_and_get_multiple_info(self, code, bond_code, model, collect_method):
+        info = model.objects.filter(code=bond_code)
+        if not info:
+            collector = CollectMarketBond(code, bond_code)
+            getattr(collector, collect_method)()
+            info = model.objects.filter(code=bond_code)
         return info
 
     def handle_response(self, instance, serializer_class):
@@ -178,13 +189,14 @@ class MarketBondInquireDailyItemChartPriceViewSet(MarketBondBaseViewSet):
         if error_response:
             return error_response
         try:
-            issue_info = self.collect_and_get_info(
+            issue_info = self.collect_and_get_multiple_info(
                 code,
                 bond_code,
                 MarketBondInquireDailyItemChartPrice,
                 "store_market_bond_inquire_daily_itemchartprice",
             )
-            return self.handle_response(issue_info, self.serializer_class)
+            serialized_data = serialize('json', issue_info)
+            return Response(json.loads(serialized_data))
         except:
             return Response(
                 {"error": "code is invalid"}, status=status.HTTP_400_BAD_REQUEST
@@ -247,13 +259,14 @@ class MarketBondInquireDailyPriceViewSet(MarketBondBaseViewSet):
         if error_response:
             return error_response
         try:
-            issue_info = self.collect_and_get_info(
+            issue_info = self.collect_and_get_multiple_info(
                 code,
                 bond_code,
                 MarketBondInquireDailyPrice,
                 "store_market_bond_inquire_daily_price",
             )
-            return self.handle_response(issue_info, self.serializer_class)
+            serialized_data = serialize('json', issue_info)
+            return Response(json.loads(serialized_data))
         except:
             return Response(
                 {"error": "code is invalid"}, status=status.HTTP_400_BAD_REQUEST
