@@ -29,9 +29,12 @@ from datetime import datetime
 # from Crypto.Util.Padding import unpad
 # from base64 import b64decode
 
+
 class KisAuth:
     def __init__(self):
-        self.clearConsole = lambda: os.system("cls" if os.name in ("nt", "dos") else "clear")
+        self.clearConsole = lambda: os.system(
+            "cls" if os.name in ("nt", "dos") else "clear"
+        )
 
         self.key_bytes = 32
 
@@ -69,7 +72,6 @@ class KisAuth:
             "User-Agent": self._cfg["my_agent"],
         }
 
-
     # 토큰 발급 받아 저장 (토큰값, 토큰 유효시간,1일, 6시간 이내 발급신청시는 기존 토큰값과 동일, 발급시 알림톡 발송)
     def save_token(self, my_token, my_expired):
         valid_date = datetime.strptime(my_expired, "%Y-%m-%d %H:%M:%S")
@@ -77,7 +79,6 @@ class KisAuth:
         with open(self.token_tmp, "w", encoding="utf-8") as f:
             f.write(f"token: {my_token}\n")
             f.write(f"valid-date: {valid_date}\n")
-
 
     # 토큰 확인 (토큰값, 토큰 유효시간_1일, 6시간 이내 발급신청시는 기존 토큰값과 동일, 발급시 알림톡 발송)
     def read_token(self):
@@ -102,13 +103,11 @@ class KisAuth:
             # print('read token error: ', e)
             return None
 
-
     # 토큰 유효시간 체크해서 만료된 토큰이면 재발급처리
     def _getBaseHeader(self):
         if self._autoReAuth:
             self.reAuth()
         return copy.deepcopy(self._base_headers)
-
 
     # 가져오기 : 앱키, 앱시크리트, 종합계좌번호(계좌번호 중 숫자8자리), 계좌상품코드(계좌번호 중 숫자2자리), 토큰, 도메인
     def _setTRENV(self, cfg):
@@ -129,13 +128,11 @@ class KisAuth:
         # print(cfg['my_app'])
         self._TRENV = nt1(**d)
 
-
     def isPaperTrading(self):  # 모의투자 매매
         return self._isPaper
 
-
     # 실전투자면 'prod', 모의투자면 'vps'를 셋팅 하시기 바랍니다.
-    def changeTREnv(self, token_key, svr="prod", product=''):
+    def changeTREnv(self, token_key, svr="prod", product=""):
         cfg = dict()
         product = self._cfg["my_prod"]
         if svr == "prod":  # 실전투자
@@ -170,16 +167,14 @@ class KisAuth:
         # print(cfg)
         self._setTRENV(cfg)
 
-
     def _getResultObject(self, json_data):
         _tc_ = namedtuple("res", json_data.keys())
 
         return _tc_(**json_data)
 
-
     # Token 발급, 유효기간 1일, 6시간 이내 발급시 기존 token값 유지, 발급시 알림톡 무조건 발송
     # 모의투자인 경우  svr='vps', 투자계좌(01)이 아닌경우 product='XX' 변경하세요 (계좌번호 뒤 2자리)
-    def auth(self, svr="prod", product='', url=None):
+    def auth(self, svr="prod", product="", url=None):
         product = self._cfg["my_prod"]
         p = {
             "grant_type": "client_credentials",
@@ -207,13 +202,17 @@ class KisAuth:
             )  # 토큰 발급
             rescode = res.status_code
             if rescode == 200:  # 토큰 정상 발급
-                my_token = self._getResultObject(res.json()).access_token  # 토큰값 가져오기
+                my_token = self._getResultObject(
+                    res.json()
+                ).access_token  # 토큰값 가져오기
                 my_expired = self._getResultObject(
                     res.json()
                 ).access_token_token_expired  # 토큰값 만료일시 가져오기
                 self.save_token(my_token, my_expired)  # 새로 발급 받은 토큰 저장
             else:
-                print("Get Authentification token fail!\nYou have to restart your app!!!")
+                print(
+                    "Get Authentification token fail!\nYou have to restart your app!!!"
+                )
                 return
         else:
             my_token = saved_token  # 기존 발급 토큰 확인되어 기존 토큰 사용
@@ -233,7 +232,14 @@ class KisAuth:
     ########### API call wrapping : API 호출 공통
 
     def _url_fetch(
-            this, api_url, ptr_id, tr_cont, params, appendHeaders=None, postFlag=False, hashFlag=True
+        this,
+        api_url,
+        ptr_id,
+        tr_cont,
+        params,
+        appendHeaders=None,
+        postFlag=False,
+        hashFlag=True,
     ):
         url = f"{this.getTREnv().my_url}{api_url}"
 
@@ -277,20 +283,17 @@ class KisAuth:
 
     # end of initialize, 토큰 재발급, 토큰 발급시 유효시간 1일
     # 프로그램 실행시 _last_auth_time에 저장하여 유효시간 체크, 유효시간 만료시 토큰 발급 처리
-    def reAuth(self, svr="prod", product=''):
+    def reAuth(self, svr="prod", product=""):
         product = self._cfg["my_prod"]
         n2 = datetime.now()
         if (n2 - self._last_auth_time).seconds >= 86400:  # 유효시간 1일
             self.auth(svr, product)
 
-
     def getEnv(self):
         return self._cfg
 
-
     def getTREnv(self):
         return self._TRENV
-
 
     # 주문 API에서 사용할 hash key값을 받아 header에 설정해 주는 함수
     # 현재는 hash key 필수 사항아님, 생략가능, API 호출과정에서 변조 우려를 하는 경우 사용
@@ -384,4 +387,3 @@ class APIResp:
         print("-------------------------------")
 
     # end of class APIResp
-

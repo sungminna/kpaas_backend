@@ -8,7 +8,7 @@ from koreaib.models import (
     MarketBondInquireCCNL,
     MarketBondInquireDailyPrice,
     SearchKeyword,
-    NaverNews
+    NaverNews,
 )
 
 from koreaib.serializer import (
@@ -21,14 +21,15 @@ from koreaib.serializer import (
     MarketBondInquireCCNLSerializer,
     MarketBondInquireDailyPriceSerializer,
     SearchKeywordSerializer,
-    NaverNewsSerializer
+    NaverNewsSerializer,
 )
 
 
 from koreaib.kib_api.get_rest_data import GetRestData
 
+
 class CollectMarketBond:
-    def __init__(self, pdno="KR6150351E98", bond_code=''):
+    def __init__(self, pdno="KR6150351E98", bond_code=""):
         self.pdno = pdno
         self.bond_code = bond_code
         self.data_getter = GetRestData(pdno=self.pdno, bond_code=self.bond_code)
