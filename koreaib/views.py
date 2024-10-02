@@ -37,6 +37,8 @@ from rest_framework.decorators import action
 from django.core.serializers import serialize
 import json
 
+from koreaib.news_api.get_news_data import GetNewsData
+
 
 class MarketBondCodeViewSet(viewsets.ModelViewSet):
     queryset = MarketBondCode.objects.all()
@@ -281,3 +283,37 @@ class SearchKeywordViewSet(viewsets.ReadOnlyModelViewSet):
 class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = NaverNews.objects.all()
     serializer_class = NaverNewsSerializer
+
+    @action(detail=False, methods=['GET'])
+    def data(self, request, *args, **kwargs):
+        query = request.query_params.get("query")
+        if not query:
+            return Response(
+                {"error": "query is missing"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+
+            kw = SearchKeyword.objects.filter(search_keyword=query).first()
+            if not kw:
+                serializer = SearchKeywordSerializer(data={"search_keyword": query})
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    return Response({"error": "Failed to retrieve or create search_keyword"},
+                        status=status.HTTP_400_BAD_REQUEST,)
+            kw = SearchKeyword.objects.filter(search_keyword=query).first()
+            getter = GetNewsData(kw.search_keyword)
+            res = getter.get_naver_news_data().json()
+            items = res["items"]
+            for item in items:
+                item['search_keyword'] = kw.id
+            serializer = NaverNewsSerializer(data=items, many=True)
+            print(serializer.is_valid())
+            if serializer.is_valid():
+                print('valid')
+                serializer.save()
+                return Response(res)
+            else:
+                return Response(res)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

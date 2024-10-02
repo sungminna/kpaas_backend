@@ -9,6 +9,7 @@ from .views import (
     MarketBondInquirePriceViewSet,
     MarketBondInquireCCNLViewSet,
     MarketBondInquireDailyPriceViewSet,
+    NaverNewsViewSet,
 )
 
 router = DefaultRouter()
@@ -23,5 +24,7 @@ router.register(
 router.register("market-bond-inquire-price", MarketBondInquirePriceViewSet)
 router.register("market-bond-inquire-ccnl", MarketBondInquireCCNLViewSet)
 router.register("market-bond-inquire-daily-price", MarketBondInquireDailyPriceViewSet)
+router.register("news", NaverNewsViewSet)
+
 
 urlpatterns = router.urls

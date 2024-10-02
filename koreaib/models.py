@@ -456,7 +456,7 @@ class MarketBondInquireDailyPrice(models.Model):
 
 # 네이버 뉴스 검색 키워드
 class SearchKeyword(models.Model):
-    query = models.CharField(max_length=200, verbose_name="검색 키워드")
+    search_keyword = models.CharField(max_length=200, verbose_name="검색 키워드")
 
 
 # 네이버 뉴스 API
@@ -467,3 +467,8 @@ class NaverNews(models.Model):
     link = models.CharField(max_length=200, verbose_name="링크")
     description = models.TextField(verbose_name="요약")
     pubDate = models.CharField(max_length=200, verbose_name="발행 일자")
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['originallink'], name='unique_naver_news')
+        ]
