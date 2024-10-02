@@ -343,25 +343,14 @@ class SearchKeywordSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class NaverNewsListSerializer(serializers.ListSerializer):
-    def create(self, validated_data):
-        # 기존 originallink 목록 가져오기
-        existing_links = set(NaverNews.objects.values_list('originallink', flat=True))
-        news_items_to_create = []
-        for item in validated_data:
-            if item['originallink'] not in existing_links:
-                news_items_to_create.append(NaverNews(**item))
-                existing_links.add(item['originallink'])
-
-        # bulk_create를 사용하여 새로운 항목들만 생성
-        created_items = NaverNews.objects.bulk_create(news_items_to_create)
-
-        return created_items
-
 class NaverNewsSerializer(serializers.ModelSerializer):
     search_keyword = serializers.PrimaryKeyRelatedField(queryset=SearchKeyword.objects.all())
 
     class Meta:
         model = NaverNews
         fields = "__all__"
-        list_serializer_class = NaverNewsListSerializer
+
+    @classmethod
+    def remove_duplicates(cls, items):
+        existing_links = set(NaverNews.objects.values_list('originallink', flat=True))
+        return [item for item in items if item['originallink'] not in existing_links]

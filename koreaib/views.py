@@ -292,7 +292,6 @@ class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
                 {"error": "query is missing"}, status=status.HTTP_400_BAD_REQUEST
             )
         try:
-
             kw = SearchKeyword.objects.filter(search_keyword=query).first()
             if not kw:
                 serializer = SearchKeywordSerializer(data={"search_keyword": query})
@@ -307,13 +306,10 @@ class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
             items = res["items"]
             for item in items:
                 item['search_keyword'] = kw.id
-            serializer = NaverNewsSerializer(data=items, many=True)
-            print(serializer.is_valid())
+            unique_items = NaverNewsSerializer.remove_duplicates(items)
+            serializer = NaverNewsSerializer(data=unique_items, many=True)
             if serializer.is_valid():
-                print('valid')
                 serializer.save()
-                return Response(res)
-            else:
-                return Response(res)
+            return Response(res)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
