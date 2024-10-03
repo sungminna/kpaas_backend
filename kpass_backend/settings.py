@@ -25,12 +25,13 @@ SECRET_KEY = "django-insecure-#5hbf+3^%%0xgefi20jk(ckc!wu-idh9pi$lrnc2&y)o%irif(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -71,6 +72,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "kpass_backend.wsgi.application"
 
+ASGI_APPLICATION = "kpass_backend.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

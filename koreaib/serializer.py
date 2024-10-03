@@ -14,6 +14,7 @@ from .models import (
 )
 from rest_framework.validators import UniqueValidator
 
+
 class MarketBondCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketBondCode
@@ -336,6 +337,11 @@ class MarketBondInquireDailyPriceSerializer(serializers.ModelSerializer):
             "bond_lwpr": {"allow_blank": True},
         }
 
+    @classmethod
+    def remove_duplicates(cls, items):
+        existing_links = set(MarketBondInquireDailyPrice.objects.values_list("stck_bsop_date", flat=True))
+        return [item for item in items if item.stck_bsop_date not in existing_links]
+
 
 class SearchKeywordSerializer(serializers.ModelSerializer):
     class Meta:
@@ -344,7 +350,9 @@ class SearchKeywordSerializer(serializers.ModelSerializer):
 
 
 class NaverNewsSerializer(serializers.ModelSerializer):
-    search_keyword = serializers.PrimaryKeyRelatedField(queryset=SearchKeyword.objects.all())
+    search_keyword = serializers.PrimaryKeyRelatedField(
+        queryset=SearchKeyword.objects.all()
+    )
 
     class Meta:
         model = NaverNews
@@ -352,5 +360,5 @@ class NaverNewsSerializer(serializers.ModelSerializer):
 
     @classmethod
     def remove_duplicates(cls, items):
-        existing_links = set(NaverNews.objects.values_list('originallink', flat=True))
-        return [item for item in items if item['originallink'] not in existing_links]
+        existing_links = set(NaverNews.objects.values_list("originallink", flat=True))
+        return [item for item in items if item["originallink"] not in existing_links]

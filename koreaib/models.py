@@ -395,8 +395,11 @@ class MarketBondInquireDailyItemChartPrice(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['stck_bsop_date'], name='unique_daily_item_chart_price')
+            UniqueConstraint(
+                fields=["stck_bsop_date"], name="unique_daily_item_chart_price"
+            )
         ]
+
 
 # 장내채권현재가(시세)
 class MarketBondInquirePrice(models.Model):
@@ -426,11 +429,7 @@ class MarketBondInquireCCNL(models.Model):
     stck_cntg_hour = models.CharField(max_length=6, verbose_name="주식 체결 시간")
     bond_prpr = models.CharField(max_length=112, verbose_name="채권 현재가")
     bond_prdy_vrss = models.CharField(max_length=112, verbose_name="채권 전일 대비")
-    prdy_vrss_sign = models.CharField(
-        max_length=1,
-        verbose_name="전일 대비 부호",
-        choices=[("+", "상승"), ("-", "하락"), ("0", "보합")],
-    )
+    prdy_vrss_sign = models.CharField(max_length=1, verbose_name="전일 대비 부호")
     prdy_ctrt = models.CharField(max_length=82, verbose_name="전일 대비율")
     cntg_vol = models.CharField(max_length=18, verbose_name="체결 거래량")
     acml_vol = models.CharField(max_length=18, verbose_name="누적 거래량")
@@ -451,8 +450,9 @@ class MarketBondInquireDailyPrice(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['stck_bsop_date'], name='unique_daily_price')
+            UniqueConstraint(fields=["stck_bsop_date"], name="unique_daily_price")
         ]
+
 
 # 네이버 뉴스 검색 키워드
 class SearchKeyword(models.Model):
@@ -470,5 +470,5 @@ class NaverNews(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['originallink'], name='unique_naver_news')
+            UniqueConstraint(fields=["originallink"], name="unique_naver_news")
         ]

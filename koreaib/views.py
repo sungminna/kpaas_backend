@@ -197,7 +197,7 @@ class MarketBondInquireDailyItemChartPriceViewSet(MarketBondBaseViewSet):
                 MarketBondInquireDailyItemChartPrice,
                 "store_market_bond_inquire_daily_itemchartprice",
             )
-            serialized_data = serialize('json', issue_info)
+            serialized_data = serialize("json", issue_info)
             return Response(json.loads(serialized_data))
         except:
             return Response(
@@ -240,10 +240,16 @@ class MarketBondInquireCCNLViewSet(MarketBondBaseViewSet):
         if error_response:
             return error_response
         try:
-            issue_info = self.collect_and_get_info(
+            issue_info = self.collect_and_get_multiple_info(
                 code, bond_code, MarketBondInquireCCNL, "store_market_bond_inquire_ccnl"
             )
-            return self.handle_response(issue_info, self.serializer_class)
+            # uniqueness logic needs to be added
+            serialized_data = serialize("json", issue_info)
+
+            serialized_data = serialize("json", issue_info)
+            return Response(json.loads(serialized_data))
+
+            # return Response(json.loads(serialized_data))
         except:
             return Response(
                 {"error": "code is invalid"}, status=status.HTTP_400_BAD_REQUEST
@@ -267,8 +273,12 @@ class MarketBondInquireDailyPriceViewSet(MarketBondBaseViewSet):
                 MarketBondInquireDailyPrice,
                 "store_market_bond_inquire_daily_price",
             )
-            serialized_data = serialize('json', issue_info)
+            unique_issue_info = MarketBondInquireDailyPriceSerializer.remove_duplicates(issue_info)
+            serialized_data = serialize("json", unique_issue_info)
+
+            serialized_data = serialize("json", issue_info)
             return Response(json.loads(serialized_data))
+            # return Response(json.loads(serialized_data))
         except:
             return Response(
                 {"error": "code is invalid"}, status=status.HTTP_400_BAD_REQUEST
@@ -284,7 +294,7 @@ class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = NaverNews.objects.all()
     serializer_class = NaverNewsSerializer
 
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=["GET"])
     def data(self, request, *args, **kwargs):
         query = request.query_params.get("query")
         if not query:
@@ -298,18 +308,22 @@ class NaverNewsViewSet(viewsets.ReadOnlyModelViewSet):
                 if serializer.is_valid():
                     serializer.save()
                 else:
-                    return Response({"error": "Failed to retrieve or create search_keyword"},
-                        status=status.HTTP_400_BAD_REQUEST,)
+                    return Response(
+                        {"error": "Failed to retrieve or create search_keyword"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             kw = SearchKeyword.objects.filter(search_keyword=query).first()
             getter = GetNewsData(kw.search_keyword)
             res = getter.get_naver_news_data().json()
             items = res["items"]
             for item in items:
-                item['search_keyword'] = kw.id
+                item["search_keyword"] = kw.id
             unique_items = NaverNewsSerializer.remove_duplicates(items)
             serializer = NaverNewsSerializer(data=unique_items, many=True)
             if serializer.is_valid():
                 serializer.save()
             return Response(res)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
