@@ -1,6 +1,7 @@
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    MarketBondCodeViewSet,
     MarketBondIssueInfoViewSet,
     MarketBondSearchInfoViewSet,
     MarketBondInquireAskingPriceViewSet,
@@ -13,6 +14,7 @@ from .views import (
 )
 
 router = DefaultRouter()
+router.register("market-bond-code", MarketBondCodeViewSet)
 router.register("market-bond-issue-info", MarketBondIssueInfoViewSet)
 router.register("market-bond-search-info", MarketBondSearchInfoViewSet)
 router.register("market-bond-inquire-asking-price", MarketBondInquireAskingPriceViewSet)

@@ -7,6 +7,12 @@ from django.db.models import UniqueConstraint
 
 class MarketBondCode(models.Model):
     code = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['code'], name='unique_code_field')
+        ]
 
 
 # 장내채권 발행정보
